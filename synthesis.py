@@ -56,7 +56,7 @@ class DataFactory:
         cls,
         samples: List[Tuple],
         n: int
-    ):
+    ) -> List[Tuple[np.ndarray, Union[str, int]]]:
         """
         Assume a fixed sampling rate. Generate random time intervals to resample the trajectories.
         args:
@@ -210,7 +210,7 @@ class DataFactory:
         return rotated
 
     @classmethod
-    def shear(cls, samples: List[Tuple], n: int, shear_ratio: float = 0.3) -> List[Tuple]:
+    def shear(cls, samples: List[Tuple], n: int, shear_ratio: float = 0.3) -> List[Tuple[np.ndarray, Union[str, int]]]:
         """
         `shear_ratio` (float) (-1, 1) is the range of the shear ratio.
         Multiply each point of the trajectory by a shearing matrix with a factor m.
@@ -239,7 +239,7 @@ class DataFactory:
         return sheared
 
     @classmethod
-    def perspective(cls, samples: List[Tuple], n: int, max_angle: float = 30.0):
+    def perspective(cls, samples: List[Tuple], n: int, max_angle: float = 30.0) -> List[Tuple[np.ndarray, Union[str, int]]]:
         """
         Generate perspective transformations. For 2D trajectories this means rotation around the X and Y axes.
         args:
@@ -375,7 +375,7 @@ class DataFactory:
         return skipped
 
     @classmethod
-    def bezier_deformation(cls, samples: List[Tuple], n: int):
+    def bezier_deformation(cls, samples: List[Tuple], n: int) -> List[Tuple[np.ndarray, Union[str, int]]]:
         """
         Apply Bezier deformation using B-spline.
         args:
@@ -454,6 +454,26 @@ class DataFactory:
                 bezier_deformed.append((traj_out, label))
 
         return bezier_deformed
+
+    @classmethod
+    def generate_avc(cls, samples: List[Tuple], n: int) -> List[Tuple[np.ndarray, Union[str, int]]]:
+        """
+        Generate chain of `gaussian` -> `frame-skip` -> `spatial` -> `perspective` -> `rotate` -> `scale`.
+        args:
+            `samples` (List): list of training samples
+            `n` (int): number of new samples to generate per original sample
+        """
+        return cls.generate_chain(samples, ["gaussian", "frame-skip", "spatial", "perspective", "rotate", "scale"], n)
+
+    @classmethod
+    def generate_simple(cls, samples: List[Tuple], n: int) -> List[Tuple[np.ndarray, Union[str, int]]]:
+        """
+        Generate chaing of `rotate` -> `scale` -> `gaussian`.
+        args:
+            `samples` (List): list of training samples
+            `n` (int): number of new samples to generate per original sample
+        """
+        return cls.generate_chain(samples, ["rotate", "scale", "gaussian"], n)
 
     @staticmethod
     def generate_chain(

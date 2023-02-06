@@ -483,6 +483,11 @@ class DataFactory:
     ) -> List[Tuple[np.ndarray, Union[str, int]]]:
         """
         Generate a chain of synthetic samples from a list of original samples.
+
+        Available methods:
+        `gaussian`, `uniform`, `rotate`, `perspective`, `scale`, 
+        `shear`, `spatial`, `temporal`, `duplicate`, `frame-skip`, `frame-jitter`, `bezier`.
+
         args:
             `originals` (List) list of original samples
             `chain` (List): list of method names

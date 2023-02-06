@@ -1,6 +1,67 @@
 import random
 import numpy as np
 
+class DP(object):
+    """
+    Score points based on Ramer Douglas Peucker algorithm:
+    https://en.wikipedia.org/wiki/Ramer-Douglas-Peucker_algorithm
+
+    Example:
+        epsilon = 2.0
+
+        dp = DP(trajectory)
+        afterdp = dp.run()
+
+        indices_keep = sorted([r[0] for r in dp.results if r[1] > epsilon])
+        simplified_trajectory = trajectory[indices_keep]
+    """
+
+    def __init__(self, _pts):
+
+        self.pts = np.copy(np.array(_pts))
+        self.N = len(self.pts)
+        self.results = [[idx, np.inf] for idx in range(self.N)]  # List[index, distance]
+
+    def run(self):
+        self.dp(0, self.N - 1)
+        self.results = sorted(
+            self.results, key=lambda r: r[1], reverse=True  # sort on score
+        )
+        indices = sorted([r[0] for r in self.results[:16]])  # keep top 16
+        resampled = self.pts[indices]
+        return resampled
+
+    def dp(self, start, end):
+        if start + 1 == end or start == end:
+            return
+        dmax = -np.inf
+        index = -1
+
+        # Find the point with the maximum distance
+        for i in range(start + 1, end):
+            d = self.point_line_dist(self.pts[i], self.pts[start], self.pts[end])
+            if d > dmax:
+                index = i
+                dmax = d
+
+        assert index != -1
+
+        self.results[index][1] = dmax
+
+        # print start, index, end
+        self.dp(start, index)
+        self.dp(index, end)
+
+    def point_line_dist(self, point, start, end):
+        """Calculate the distance between a point and a line"""
+        if np.all(np.equal(start, end)):
+            return np.linalg.norm(point - start)
+
+        return np.divide(
+            np.abs(np.linalg.norm(np.cross(end - start, start - point))),
+            np.linalg.norm(end - start),
+        )
+
 def path_length(pts):
     """Path traveled by the points of a gesture: sum of Euclidean
     distances between each consecutive pair of points"""
@@ -10,6 +71,7 @@ def path_length(pts):
         ret += np.linalg.norm(pts[idx] - pts[idx - 1])
 
     return ret
+
 
 def resample(pts, n, variance=0.0) -> np.ndarray:
     """Resample a trajectory in pts into n points"""
@@ -79,3 +141,35 @@ def resample(pts, n, variance=0.0) -> np.ndarray:
 
     assert jj == n
     return ret
+
+
+def rotate_by_angle(p, origin=(0, 0), angle=0):
+    """Rotate trajectory around origin by an angle"""
+    R = np.array([[np.cos(angle), -np.sin(angle)],
+                 [np.sin(angle), np.cos(angle)]])
+    o = np.atleast_2d(origin)
+    p = np.atleast_2d(p)
+    return np.squeeze((R @ (p.T - o.T) + o.T).T)
+
+
+def get_x_3d_rotation_matrix(theta):
+    # if it's an angle in degrees, convert to radians, using the formula: rad = theta * pi / 180
+    theta = theta * np.pi / 180
+    return np.array(
+        [
+            [1, 0, 0],
+            [0, np.cos(theta), -np.sin(theta)],
+            [0, np.sin(theta), np.cos(theta)],
+        ]
+    )
+
+
+def get_y_3d_rotation_matrix(theta):
+    theta = theta * np.pi / 180
+    return np.array(
+        [
+            [np.cos(theta), 0, np.sin(theta)],
+            [0, 1, 0],
+            [-np.sin(theta), 0, np.cos(theta)],
+        ]
+    )

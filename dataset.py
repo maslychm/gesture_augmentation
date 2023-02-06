@@ -88,7 +88,7 @@ class GDSDataset:
     snames:     All subject names
     """
 
-    def __init__(self, path: str) -> None:
+    def __init__(self, path: str, sub_idx: int = None) -> None:
         self.name: str = "gds"
         self.subjects = {}
         self.sgestures = {}
@@ -96,7 +96,7 @@ class GDSDataset:
         self.gnames: List[str] = []
         self.snames: List[str] = []
 
-        samples = self._load(path)
+        samples = self._load(path, sub_idx)
         self._fill(samples)
 
     def __str__(self) -> str:

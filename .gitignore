@@ -1,4 +1,5 @@
 # ignore the dataset folder
+xml.zip
 **/xml_logs/
 
 # Byte-compiled / optimized / DLL files

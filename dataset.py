@@ -1,6 +1,6 @@
 import glob
 import os
-from typing import List
+from typing import List, Tuple
 import xml.etree.ElementTree as ET
 import numpy as np
 
@@ -67,11 +67,6 @@ class Sample(object):
             trajectory=pts,
             timestamps=timestamps,
         )
-
-        # number = int(
-        #     "".join([i for i in gesture.attrib["Number"] if i.isdigit()]))
-        # sample.number = number
-        # sample.speed = gesture.attrib["Speed"]
 
         return sample
 
@@ -178,6 +173,134 @@ class GDSDataset:
         with zipfile.ZipFile(filepath, 'r') as zip_ref:
             zip_ref.extractall(root)
         print("Done Extracting.")
+
+    def ud_split(self, k: int, fixed: bool = False):
+        """
+        Get u User-Dependent train, validation, and test splits.
+        When `fixed = true`, sample the same way for a consistent test.
+        Isolate the test samples from validation; Extract k per class for training.
+
+        Test indices will always be the same irrespective of `fixed` or gname.
+        Train and validation indices will be different for each gname, but same
+        across runs if `fixed = True`.
+        args:
+            `k` (int): number of samples per class to use for training.
+            `fixed` (bool): if True, use the same train and val indices across runs.
+
+        returns: `train, val, test` as Lists of Tuples[points, label]
+        """
+
+        if len(self.snames) > 1:
+            raise ValueError("More than 1 subject. Cannot use UD split.")
+
+        sname = self.snames[0]
+        rand = np.random.RandomState(42) if fixed else np.random.RandomState(None)
+
+        # Isolate test sample indices (20%) -> always same
+        test_indeces = set(
+            [i * 5 for i in range(len(self.sgestures[sname][self.gnames[0]]) // 5)]
+        )
+
+        test, train, val = [], [], []
+        for gname in self.gnames:
+
+            # Different train and val indices for each gname.
+            # If `fixed == True`, same across runs but still diff for gnames.
+            val_indeces = set(range(len(self.sgestures[sname][gname]))) - test_indeces
+            train_indeces = set(list(rand.choice(list(val_indeces), k, replace=False)))
+            val_indeces = val_indeces - set(train_indeces)
+
+            # check for no intersections between the three sets
+            assert (
+                len(train_indeces & val_indeces) == 0
+                and len(train_indeces & test_indeces) == 0
+                and len(val_indeces & test_indeces) == 0
+            )
+
+            for i, sample in enumerate(self.sgestures[sname][gname]):
+                if i in test_indeces:
+                    test.append(sample)
+                elif i in train_indeces:
+                    train.append(sample)
+                elif i in val_indeces:
+                    val.append(sample)
+
+        return samples_to_np(train), samples_to_np(val), samples_to_np(test)
+
+    def ui_split(self, split_idx: int, p: int, k: int, fixed: bool = False):
+        """
+        User-Independent split.
+        args:
+            `split_idx` (int): index of the subject to use for training.
+            `p` (int): number of subjects to use for validation.
+            `k` (int): number of samples per class to use for training.
+            `fixed` (bool): if True, use the same train and val indices across runs.
+        """
+        if len(self.snames) < 10:
+            raise ValueError("Not whole set is loaded. Cannot use UI split.")
+
+        train_pids, val_pids, test_pids = self._get_ui_split_indeces(
+            split_idx, p=p, fixed=fixed
+        )
+
+        rand = np.random.RandomState(42) if fixed else np.random.RandomState(None)
+
+        train, val, test = [], [], []
+
+        for pid in train_pids:
+            sname = self.snames[pid]
+            for gname in self.gnames:
+                train.extend(
+                    rand.choice(self.sgestures[sname][gname], k, replace=False)
+                )
+
+        for pid in val_pids:
+            sname = self.snames[pid]
+            for gname in self.gnames:
+                val.extend(self.sgestures[sname][gname])
+
+        for pid in test_pids:
+            sname = self.snames[pid]
+            for gname in self.gnames:
+                test.extend(self.sgestures[sname][gname])
+
+        return samples_to_np(train), samples_to_np(val), samples_to_np(test)
+    
+    def _get_ui_split_indeces(
+        self, split_idx: int, p: int, fixed: bool = False
+    ) -> Tuple[List, List, List]:
+
+        """
+        args:
+            `split_idx` [1, 11) is the index of the split to use.
+            `p` [1, 2, 4] is the number of train subjects per split.
+            `fixed` is whether to use a random seed or a fixed one.
+
+        returns: `train_pids, val_plids, test_pids` as Lists of ints.
+        """
+
+        if split_idx not in list(range(1, 11)):
+            raise ValueError("Split index must be in range [1, 10]")
+
+        rand = np.random.RandomState(42) if fixed else np.random.RandomState()
+
+        all_indices = set(range(0, 10))
+
+        # always add the "indexed" participant to train
+        train_indices = set([split_idx - 1])
+        all_indices -= train_indices
+
+        train_indices.update(list(rand.choice(list(all_indices), p - 1, replace=False)))
+        all_indices -= train_indices
+
+        val_indices = set(list(rand.choice(list(all_indices), 2, replace=False)))
+        all_indices -= val_indices
+
+        test_indices = set(list(rand.choice(list(all_indices), 2, replace=False)))
+        all_indices -= test_indices
+
+        return list(train_indices), list(val_indices), list(test_indices)
+
 
 def samples_to_np(samples: List[Sample]):
     return [(s.trajectory.copy(), s.gname) for s in samples]

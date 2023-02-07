@@ -1,6 +1,17 @@
 import random
 import numpy as np
 
+class LabelEncoder:
+    def __init__(self):
+        self.classes_ = None
+
+    def fit(self, y):
+        self.classes_ = sorted(list(set(y)))
+
+    def transform(self, y):
+        return [self.classes_.index(label) for label in y]
+
+
 class DP(object):
     """
     Score points based on Ramer Douglas Peucker algorithm:
@@ -173,3 +184,16 @@ def get_y_3d_rotation_matrix(theta):
             [-np.sin(theta), 0, np.cos(theta)],
         ]
     )
+
+
+def first_point_to_origin(trajectory):
+    trajectory = trajectory - trajectory[0]
+    return trajectory
+
+
+def first_point_to_origin_whole_set(train, val, test):
+    train = [(first_point_to_origin(t[0]), t[1]) for t in train]
+    val = [(first_point_to_origin(t[0]), t[1]) for t in val]
+    test = [(first_point_to_origin(t[0]), t[1]) for t in test]
+    return train, val, test
+

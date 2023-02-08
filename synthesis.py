@@ -12,7 +12,6 @@ from scipy import interpolate
 from utils import (
     DP,
     resample,
-    # gpsr,
     rotate_by_angle,
     get_x_3d_rotation_matrix,
     get_y_3d_rotation_matrix
@@ -509,7 +508,6 @@ class DataFactory:
             "duplicate": partial(DataFactory.point_duplicate, duplication_ratio=0.1),
             "frame-skip": partial(DataFactory.frame_skip, skip_ratio=0.3),
             "frame-jitter": partial(DataFactory.sampling_with_frame_jitter, option=0),
-            # "gpsr": partial(DataFactory.gpsr, fixed_n=0, fixed_r=0),
             "bezier": partial(DataFactory.bezier_deformation),
         }
 

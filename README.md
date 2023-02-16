@@ -1,29 +1,6 @@
 # gestures augmentation
 
-## TODO
-
-### Part 1
-
-- load dataset ✅
-- importable gesture synthesis code
-
-### Part 2
-
-- RNN model
-- Training
-
-### Part 3
-
-- Add env requirements
-- Test on multiple setups
-
-### Required packages
-
-- numpy
-- scipy
-- matplotlib
-
-### Environment Setup
+## Environment Setup
 
 Windows:
 
@@ -42,3 +19,23 @@ Mac:
     conda install matplotlib
     conda install scipy
     pip install pytorch-lightning
+
+## Citing
+
+If you use this code for your research, please cite our paper:
+
+    @inproceedings{maslych2023gesture_augmentation,
+        author = {Maslych, Mykola and Aldilati, Mostafa and Taranta II, Eugene M. and LaViola Jr., Joseph J.},
+        title = {Effective 2D Stroke-based Gesture Augmentation for RNNs},
+        booktitle = {Proceedings of the 2023 CHI Conference on Human Factors in Computing Systems},
+        series = {CHI '23},
+        year = {2023},
+        location = {Hamburg, Germany},
+        pages = {TODO},
+        doi = {10.1145/3544548.3581358},
+        publisher = {ACM},
+    }
+
+## Contributions and Bug Reports
+
+Contributions are welcome. Please submit your contributions as a pull request and we will incorporate them. If you find any bugs, please report them as an issue.

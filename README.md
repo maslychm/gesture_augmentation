@@ -1,4 +1,8 @@
-# gestures augmentation
+# Effective 2D Stroke-based Gesture Augmentation for RNNs
+
+Implementation of the augmentation methods described in the paper "Effective 2D Stroke-based Gesture Augmentation for RNNs" by Mykola Maslych, Mostafa Aldilati, Dr. Eugene M. Taranta II, and Dr. Joseph J. LaViola Jr. (2023) <https://doi.org/10.1145/3544548.3581358>.
+
+RNNs show great performance on time-series tasks, but specifically for custom gestures, the data provided by a user is not enough to train an accurate model. We evaluate a number of existing augmentation methods and chain them into series of transformations that maximize accuracy.  
 
 ## Environment Setup
 

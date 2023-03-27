@@ -4,11 +4,15 @@ from model import LitGestureNN
 from data import load_data
 from options import Options
 
+import torch
+
 from pytorch_lightning.callbacks import ModelCheckpoint, Callback
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from pytorch_lightning import Trainer, seed_everything
 
 from sys import platform
+
+use_cuda = torch.cuda.is_available()
 
 """
 Example calls:
@@ -51,7 +55,7 @@ def train_model(opt: Options, train_dataloader, val_dataloader):
 
     trainer = Trainer(
         max_steps=2000,
-        accelerator=None if platform == "darwin" else "gpu",
+        accelerator=None if platform == "darwin" else "gpu" if use_cuda else "cpu",
         devices=None if platform == "darwin" else 1,
         deterministic=opt.fixed,
         callbacks=callbacks,

@@ -4,7 +4,7 @@ Implementation of the augmentation methods described in the paper "Effective 2D 
 
 RNNs show great performance on time-series tasks, but specifically for custom gestures, the data provided by a user is not enough to train an accurate model. We evaluate a number of existing augmentation methods and chain them into series of transformations that maximize accuracy.  
 
-The following is some sample synthetic stroke gestures from the $1-GDS dataset, produced by All Variability Chain (AVC). This chain of transformations is applies `gaussian noise` -> `frame skipping` -> `spatial resampling` -> `perspective change` -> `rotations` -> `scaling`.
+The following is some sample synthetic stroke gestures from the [$1-GDS](http://depts.washington.edu/acelab/proj/dollar/index.html) dataset, produced by All Variability Chain (AVC). This chain of transformations is applies `gaussian noise` -> `frame skipping` -> `spatial resampling` -> `perspective change` -> `rotations` -> `scaling`.
 
 ![Example of $1 gestures augmented using AVC chain](visualizations/avc.png)
 
@@ -21,6 +21,7 @@ For more examples, check out the `generate_gestures.ipynb` notebook.
 * NumPy 1.23.5
 * Matplotlib 3.6.2
 * Torchmetrics 0.11.1
+* (Optional) CUDA Toolkit (for GPU support)
 
 These can be installed by simply running:
 

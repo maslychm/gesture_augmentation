@@ -1,5 +1,8 @@
 import random
+from typing import Any, List, Tuple, Union
+from matplotlib import pyplot as plt
 import numpy as np
+from dataset import Sample
 
 class LabelEncoder:
     def __init__(self):
@@ -197,3 +200,23 @@ def first_point_to_origin_whole_set(train, val, test):
     test = [(first_point_to_origin(t[0]), t[1]) for t in test]
     return train, val, test
 
+
+def plot_traj(traj: Union[Sample, Tuple[np.ndarray, Union[str, int]], Any]):
+    if isinstance(traj, Sample):
+        traj = traj.trajectory
+    elif isinstance(traj, tuple):
+        traj = traj[0]
+    traj = np.array(traj)
+    fig, ax = plt.subplots()
+    ax.plot(traj[:, 0], traj[:, 1], 'o-')
+    plt.show()
+
+def plot_trajs(trajs: List[Union[Sample, Tuple[np.ndarray, Union[str, int]], Any]]):
+    fig, ax = plt.subplots()
+    for traj in trajs:
+        if isinstance(traj, Sample):
+            traj = traj.trajectory
+        elif isinstance(traj, tuple):
+            traj = traj[0]
+        traj = np.array(traj)
+        ax.plot(traj[:, 0], traj[:, 1], 'o-')

@@ -14,6 +14,12 @@ For more examples, check out the `generate_gestures.ipynb` notebook.
 
 ### Pre-requisites
 
+Pre-requisites can be installed by running:
+
+```bash
+pip install -r requirements.txt
+```
+
 * Python 3.9+
 * Pytorch 1.13.1
 * Pytorch Lightning 1.9.0
@@ -22,12 +28,6 @@ For more examples, check out the `generate_gestures.ipynb` notebook.
 * Matplotlib 3.6.2
 * Torchmetrics 0.11.1
 * (Optional) CUDA Toolkit (for GPU support)
-
-These can be installed by simply running:
-
-```bash
-pip install -r requirements.txt
-```
 
 ### Training the model
 

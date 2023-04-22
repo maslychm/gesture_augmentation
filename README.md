@@ -44,16 +44,21 @@ You can also specify arguments, run `python main.py --help` to see the list of a
 If you use this code for your research, please cite our paper:
 
 ```bibtex
-@inproceedings{maslych2023gesture_augmentation,
-    author = {Maslych, Mykola and Aldilati, Mostafa and Taranta II, Eugene M. and LaViola Jr., Joseph J.},
-    title = {Effective 2D Stroke-based Gesture Augmentation for RNNs},
-    booktitle = {Proceedings of the 2023 CHI Conference on Human Factors in Computing Systems},
-    series = {CHI '23},
+@inproceedings{10.1145/3544548.3581358,
+    author = {Maslych, Mykola and Taranta, Eugene Matthew and Aldilati, Mostafa and Laviola, Joseph J.},
+    title = {Effective 2D Stroke-Based Gesture Augmentation for RNNs},
     year = {2023},
-    location = {Hamburg, Germany},
-    pages = {1--13},
+    isbn = {9781450394215},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/3544548.3581358},
     doi = {10.1145/3544548.3581358},
-    publisher = {ACM},
+    booktitle = {Proceedings of the 2023 CHI Conference on Human Factors in Computing Systems},
+    articleno = {282},
+    numpages = {13},
+    keywords = {neural networks, datasets, gesture recognition and customization, data augmentation},
+    location = {Hamburg, Germany},
+    series = {CHI '23}
 }
 ```
 

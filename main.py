@@ -20,6 +20,7 @@ Example calls:
 python main.py
 python main.py --augm None
 python main.py --augm gaussian_frame-skip_rotate --sub_idx 2 --original_per_class 2 --synthetic_per_class 100
+python main.py --condition ui --augm avc --num_participants 1 --original_per_class 1
 python main.py --condition ui --augm avc --num_participants 2 --original_per_class 2
 """
 
@@ -75,6 +76,7 @@ def main():
         seed_everything(42)
 
     train_dataloader, val_dataloader, test_dataloader = load_data(opt)
+    print(f"Train: {len(train_dataloader.dataset)}, VAL: {len(val_dataloader.dataset)}, Test: {len(test_dataloader.dataset)}")
     model, trainer, callbacks = train_model(opt, train_dataloader, val_dataloader)
     test_model(trainer, test_dataloader, callbacks)
 

@@ -21,13 +21,13 @@ pip install -r requirements.txt
 ```
 
 * Python 3.9+
-* Pytorch 1.13.1
-* Pytorch Lightning 1.9.0
-* SciPy 1.10.0
-* NumPy 1.23.5
-* Matplotlib 3.6.2
-* Torchmetrics 0.11.1
-* (Optional) CUDA Toolkit (for GPU support)
+* Pytorch 1.13.1+
+* Pytorch Lightning 1.9.0+
+* SciPy 1.10.0+
+* NumPy 1.23.5+
+* Matplotlib 3.6.2+
+* Torchmetrics 0.11.1+
+* (Optional) CUDA Toolkit (see [https://pytorch.org/get-started/locally/](https://pytorch.org/get-started/locally/) for GPU support) 
 
 ### Training the model
 
